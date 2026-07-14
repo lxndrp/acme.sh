@@ -205,6 +205,8 @@ Cron entry example:
 acme.sh -h
 ```
 
+---
+
 ### 2️⃣ Issue a Certificate
 
 **Example 1:** Single domain.
