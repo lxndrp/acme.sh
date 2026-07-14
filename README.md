@@ -207,6 +207,21 @@ acme.sh -h
 
 ---
 
+### 🐳 Docker secrets
+
+The Docker image supports the conventional `*_FILE` environment variable pattern. Set a variable such as `CF_Token_FILE` to a readable secret-file path, and the container entrypoint will load its contents into `CF_Token` before running `acme.sh`.
+
+```bash
+docker run --rm \
+  -e CF_Token_FILE=/run/secrets/cf_token \
+  -v "$PWD/cf_token:/run/secrets/cf_token:ro" \
+  neilpang/acme.sh --issue --dns dns_cf -d example.com
+```
+
+See the [Docker Guide](https://github.com/acmesh-official/acme.sh/wiki/Run-acme.sh-in-docker) for more information.
+
+---
+
 ### 2️⃣ Issue a Certificate
 
 **Example 1:** Single domain.

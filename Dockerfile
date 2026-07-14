@@ -76,7 +76,7 @@ RUN for verb in help \
   ; done
 
 RUN printf "%b" '#!'"/usr/bin/env sh\n \
-for var_file in \$(env | grep '_FILE=' | cut -d '=' -f 1); do \n \
+for var_file in \$(env | grep '^[A-Za-z_][A-Za-z0-9_]*_FILE=' | cut -d '=' -f 1); do \n \
   eval file_path=\\\"\\\$\${var_file}\\\" \n \
   var_name=\\\"\${var_file%_FILE}\\\" \n \
   if [ -f \\\"\$file_path\\\" ] && [ -r \\\"\$file_path\\\" ]; then \n \
