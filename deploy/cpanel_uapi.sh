@@ -52,7 +52,15 @@ cpanel_uapi_deploy() {
 
   # read cert and key files and urlencode both
   _cert=$(_url_encode <"$_ccert")
-  _key=$(_url_encode <"$_ckey")
+  # with --signcsr the private key was never handed to acme.sh, so the key
+  # file does not exist; skip it instead of spilling a shell redirection
+  # error on every renewal (cPanel keeps using the already-installed key)
+  if [ -f "$_ckey" ]; then
+    _key=$(_url_encode <"$_ckey")
+  else
+    _debug "Key file $_ckey does not exist (csr mode), not sending a key."
+    _key=""
+  fi
 
   _debug2 _cert "$_cert"
   _debug2 _key "$_key"
@@ -194,7 +202,8 @@ __cpanel_parse_response() {
         printf("%s%s=%s\n", prefix, $2, $3);
       }
     }' |
-    sed -En -e 's/^result\/data\/(main_domain|sub_domains\/-|addon_domains\/-|parked_domains\/-)=(.*)$/\2/p'
+    sed -En -e 's/^result\/data\/(main_domain|sub_domains\/-|addon_domains\/-|parked_domains\/-)=(.*)$/\2/p' |
+    sed -e 's/^"//' -e 's/"$//' # YAML double-quotes values starting with '*' (wildcard subdomains)
 }
 
 # Load parameter by prefix+name - fallback to default if not set, and save to config
